@@ -34,3 +34,9 @@
 .project
 .cproject
 .settings
+
+# vim
+*.swp
+*.swo
+*.swn
+*.swm
