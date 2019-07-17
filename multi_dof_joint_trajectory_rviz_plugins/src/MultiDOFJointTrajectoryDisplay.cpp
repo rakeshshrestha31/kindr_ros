@@ -349,8 +349,27 @@ void MultiDOFJointTrajectoryDisplay::updateTrajectory() {
 
     trajectory_msgs::MultiDOFJointTrajectoryPoint last_point;
     trajectory_msgs::MultiDOFJointTrajectoryPoint current_point = current_trajectory_->points[0];
+    
+    // lambda function to pad captions to the length of transforms
+    auto pad_captions = [](std::vector<std::string> &captions, size_t length)
+    {
+        auto size_diff = (unsigned int)length - (unsigned int)captions.size();
+        if (size_diff > 0)
+        {
+            captions.reserve(length);
+            for (size_t i = 0; i < size_diff; i++)
+            {
+                captions.push_back("N/A");
+            }
+        }
+        else if (size_diff < 0)
+        {
+            captions.resize(length);
+        }
+    };
 
     // add first point
+    pad_captions(captions[0], current_point.transforms.size());
     visuals_points.push_back(boost::shared_ptr<MultiDOFJointTrajectoryPointVisual>(new MultiDOFJointTrajectoryPointVisual(
             context_->getSceneManager(),
             scene_node_,
@@ -391,6 +410,7 @@ void MultiDOFJointTrajectoryDisplay::updateTrajectory() {
                                                                                                                                                        color_connection_)));
 
         // add pose
+        pad_captions(captions[i], current_point.transforms.size());
         visuals_points.push_back(boost::shared_ptr<MultiDOFJointTrajectoryPointVisual>(new MultiDOFJointTrajectoryPointVisual(
                 context_->getSceneManager(),
                 scene_node_,
